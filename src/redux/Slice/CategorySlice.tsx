@@ -1,27 +1,20 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { instance } from '../../network/AxiosInstance';
 
-interface productDetail {
+interface category {
     id: string,
-    categoryId: string,
-    image: string,
-    brand: string,
-    model: string,
-    description: string,
-    price: number,
-    stock: number,
-    colors: Array<string>
+    name: string,
 }
 
 interface initalState {
-    data: null | productDetail,
+    data: null | category,
     status: null | 'pending' | 'rejected' | 'fulfilled',
     error: any
 }
 
-export const getById = createAsyncThunk('postDetail/getById', async (id: string, { rejectWithValue }) => {
+export const getAll = createAsyncThunk('category/getAll', async (data, { rejectWithValue }) => {
     try {
-        const response = await instance.get(`/api/product/detail/${id}`)
+        const response = await instance.get(`/api/category/`)
         return response.data
     } catch (error) {
         return rejectWithValue('Error! Please re-check again')
@@ -34,23 +27,23 @@ const initalState: initalState = {
     error: null
 }
 
-const productDetailSlice = createSlice({
-    name: 'ProductDetail',
+const categorySlice = createSlice({
+    name: 'CategoryDetail',
     initialState: initalState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getById.pending, (state) => {
+        builder.addCase(getAll.pending, (state) => {
             state.status = 'pending'
-        }).addCase(getById.fulfilled, (state, action) => {
+        }).addCase(getAll.fulfilled, (state, action) => {
             state.data = action.payload
             state.status = 'fulfilled'
-        }).addCase(getById.rejected, (state, action) => {
+        }).addCase(getAll.rejected, (state, action) => {
             state.status = 'rejected'
             state.error = action.payload
         })
     }
 })
 
-export default productDetailSlice.reducer
+export default categorySlice.reducer
 
-export const { } = productDetailSlice.actions
+export const { } = categorySlice.actions

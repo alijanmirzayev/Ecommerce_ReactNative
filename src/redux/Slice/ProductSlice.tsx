@@ -14,14 +14,14 @@ interface productDetail {
 }
 
 interface initalState {
-    data: null | productDetail,
+    data: null | Array<productDetail>,
     status: null | 'pending' | 'rejected' | 'fulfilled',
     error: any
 }
 
-export const getById = createAsyncThunk('postDetail/getById', async (id: string, { rejectWithValue }) => {
+export const getAllProductByCategoryId = createAsyncThunk('posts/getAllProductByCategoryId', async (categoryId: string, { rejectWithValue }) => {
     try {
-        const response = await instance.get(`/api/product/detail/${id}`)
+        const response = await instance.get(`/api/product/${categoryId}`)
         return response.data
     } catch (error) {
         return rejectWithValue('Error! Please re-check again')
@@ -34,23 +34,23 @@ const initalState: initalState = {
     error: null
 }
 
-const productDetailSlice = createSlice({
-    name: 'ProductDetail',
+const productSlice = createSlice({
+    name: 'Product',
     initialState: initalState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addCase(getById.pending, (state) => {
+        builder.addCase(getAllProductByCategoryId.pending, (state) => {
             state.status = 'pending'
-        }).addCase(getById.fulfilled, (state, action) => {
+        }).addCase(getAllProductByCategoryId.fulfilled, (state, action) => {
             state.data = action.payload
             state.status = 'fulfilled'
-        }).addCase(getById.rejected, (state, action) => {
+        }).addCase(getAllProductByCategoryId.rejected, (state, action) => {
             state.status = 'rejected'
             state.error = action.payload
         })
     }
 })
 
-export default productDetailSlice.reducer
+export default productSlice.reducer
 
-export const { } = productDetailSlice.actions
+export const { } = productSlice.actions
