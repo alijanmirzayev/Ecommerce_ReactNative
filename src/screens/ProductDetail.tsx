@@ -1,12 +1,23 @@
 import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, StateType } from '../redux';
 import ArrowLeft from '../assets/Icons/ArrowLeft'
 import Heart from '../assets/Icons/Heart'
 import { COLORS } from '../constants/Colors'
 import { FONTS } from '../constants/Fonts'
 import ColorItem from '../components/ColorItem'
+import { getById } from '../redux/Slice/ProductDetailSlice';
+import Loading from '../components/Loading';
 
 export default function ProductDetail({ route, navigation }: any) {
+
+  let dispatch = useDispatch<AppDispatch>()
+  const { data, error, status } = useSelector((state: StateType) => state.productDetail)
+
+  useEffect(() => {
+    dispatch(getById(route.params.id))
+  }, [])
 
   const redirectBasket = (data: any) => {
     navigation.navigate('Basket', data)
@@ -17,38 +28,42 @@ export default function ProductDetail({ route, navigation }: any) {
       <SafeAreaView style={styles.container}>
 
         <View style={styles.headerContainer}>
-          <ArrowLeft />
+          <ArrowLeft onPress={() => navigation.goBack()} />
           <Heart />
         </View>
 
-        <View style={styles.imageContainer}>
-          <Image style={styles.image} source={{ uri: route.params.image }} />
-        </View>
-
-        <View style={styles.detailContainer}>
-
-          <Text style={styles.title}>{route.params.brand} {route.params.model}</Text>
-
-          <View>
-            <Text style={styles.colorsText}>Colors</Text>
-
-            <ColorItem data={route.params} />
-
-            <Text style={styles.description}>{route.params.description}</Text>
-          </View>
-
-          <View style={styles.priceBasketContainer}>
-            <View style={styles.priceContainer}>
-              <Text style={styles.priceText}>Price</Text>
-              <Text style={styles.price}>$ {route.params.price}</Text>
+        {
+          status == 'pending' || status == null ? <Loading /> : <>
+            <View style={styles.imageContainer}>
+              <Image style={styles.image} source={{ uri: data?.image }} />
             </View>
 
-            <TouchableOpacity onPress={() => redirectBasket(route.params)} style={styles.btnContainer}>
-              <Text style={styles.btnText}>Add to Basket</Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.detailContainer}>
 
-        </View>
+              <Text style={styles.title}>{data?.brand} {data?.model}</Text>
+
+              <View>
+                <Text style={styles.colorsText}>Colors</Text>
+
+                <ColorItem data={data} />
+
+                <Text style={styles.description}>{data?.description}</Text>
+              </View>
+
+              <View style={styles.priceBasketContainer}>
+                <View style={styles.priceContainer}>
+                  <Text style={styles.priceText}>Price</Text>
+                  <Text style={styles.price}>$ {data?.price}</Text>
+                </View>
+
+                <TouchableOpacity onPress={() => redirectBasket(data)} style={styles.btnContainer}>
+                  <Text style={styles.btnText}>Add to Basket</Text>
+                </TouchableOpacity>
+              </View>
+
+            </View>
+          </>
+        }
 
       </SafeAreaView>
     </>
