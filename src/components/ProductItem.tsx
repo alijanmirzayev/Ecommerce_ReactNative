@@ -1,12 +1,18 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
+import { useSelector } from 'react-redux';
 import { PRODUCTS } from '../data/products'
 import { COLORS } from '../constants/Colors'
 import { FONTS } from '../constants/Fonts'
+import { StateType } from '../redux';
+import Loading from './Loading';
 
 export default function ProductItem({selecetedCat, navigation}: any) {
 
+    const { data, error, status } = useSelector((state: StateType) => state.products)
+
     const redirectDetailPage = (item: any) => {
+        console.log(item)
         navigation.navigate('ProductDetail', item)
     }
 
@@ -34,11 +40,13 @@ export default function ProductItem({selecetedCat, navigation}: any) {
     return (
 
         <>
-            <FlatList
-                data={PRODUCTS}
+            {
+                status == 'pending' || status == null ? <Loading /> : <FlatList
+                data={data}
                 horizontal
                 renderItem={(item) => renderItem(item)}
             />
+            }
         </>
 
     )

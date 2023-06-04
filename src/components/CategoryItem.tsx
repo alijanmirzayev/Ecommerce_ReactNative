@@ -1,13 +1,18 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
-import { CATEGORIES } from '../data/categories'
-import { FONTS } from '../constants/Fonts'
+import React from 'react';
+import { FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
+import { FONTS } from '../constants/Fonts';
+import { StateType } from '../redux';
+import Loading from './Loading';
 
-export default function CategoryItem({selecetedCat, setSelectedCat}: any) {
+export default function CategoryItem({ selecetedCat, setSelectedCat }: any) {
 
+    const { data, error, status } = useSelector((state: StateType) => state.categories)
+    
     const renderCategoryItem = ({ item }: any) => {
+
         return (
-            item.id == selecetedCat ? <TouchableOpacity onPress={() => handleCategory(item)} style={[styles.categoryItemContainer, { borderBottomColor: '#5956E9', borderBottomWidth: 2 }]}>
+            item._id == selecetedCat ? <TouchableOpacity onPress={() => handleCategory(item)} style={[styles.categoryItemContainer, { borderBottomColor: '#5956E9', borderBottomWidth: 2 }]}>
                 <Text style={[styles.categoryItem, { color: '#5956E9' }]}>{item.name}</Text>
             </TouchableOpacity>
                 :
@@ -18,16 +23,18 @@ export default function CategoryItem({selecetedCat, setSelectedCat}: any) {
     }
 
     const handleCategory = (item: any) => {
-        setSelectedCat(item.id)
+        setSelectedCat(item._id)
     }
 
     return (
         <>
-            <FlatList
-                data={CATEGORIES}
+            {
+                status == 'pending' || status == null ? <Loading /> : <FlatList
+                data={data}
                 horizontal
                 renderItem={(item) => renderCategoryItem(item)}
             />
+            }
         </>
     )
 }
