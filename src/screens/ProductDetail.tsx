@@ -16,7 +16,7 @@ export default function ProductDetail({ route, navigation }: any) {
   const { data, error, status } = useSelector((state: StateType) => state.productDetail)
 
   useEffect(() => {
-    dispatch(getById(route.params.id))
+    dispatch(getById(route.params._id))
   }, [])
 
   const redirectBasket = (data: any) => {

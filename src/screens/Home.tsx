@@ -1,18 +1,31 @@
-import { View, Text, SafeAreaView, TextInput, StyleSheet, TouchableOpacity, FlatList, Dimensions } from 'react-native'
-import React, { useState } from 'react'
-import { CATEGORIES } from '../data/categories'
-import { COLORS } from '../constants/Colors'
-import { FONTS } from '../constants/Fonts'
-import Search from '../assets/Icons/Search'
-import CategoryItem from '../components/CategoryItem'
-import ProductItem from '../components/ProductItem'
+import React, { useEffect, useState } from 'react';
+import { Dimensions, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useDispatch } from 'react-redux';
+import Search from '../assets/Icons/Search';
+import CategoryItem from '../components/CategoryItem';
+import ProductItem from '../components/ProductItem';
+import { COLORS } from '../constants/Colors';
+import { FONTS } from '../constants/Fonts';
+import { AppDispatch } from '../redux';
+import { getAll } from '../redux/Slice/CategorySlice';
+import { getAllProductByCategoryId } from '../redux/Slice/ProductSlice';
 
 const screenHeight = Dimensions.get('screen').height
 const header = screenHeight / 4
 const product = screenHeight - header
 
-export default function Home({navigation}: any) {
-  const [selecetedCat, setSelectedCat] = useState<Number>(1)
+export default function Home({ navigation }: any) {
+  const [selecetedCat, setSelectedCat] = useState<string>('647c5c948dd4c4bc4d0f4644')
+
+  let dispatch = useDispatch<AppDispatch>()
+
+  useEffect(() => {
+    dispatch(getAll())
+  }, [])
+
+  useEffect(() => {
+    dispatch(getAllProductByCategoryId(selecetedCat))
+  }, [selecetedCat])
 
   return (
     <>
@@ -41,7 +54,7 @@ export default function Home({navigation}: any) {
           </View>
 
           <View style={styles.productContainer}>
-            <ProductItem selecetedCat={selecetedCat} navigation={navigation}/>
+            <ProductItem selecetedCat={selecetedCat} navigation={navigation} />
           </View>
 
         </View>

@@ -1,6 +1,6 @@
 export const PRODUCTS = [
     {
-        id: 1,
+        id: '647c5dc08dd4c4bc4d0f464d',
         categoryId: 1,
         image: 'https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/FG123?wid=2000&hei=2000&fmt=jpeg',
         brand: 'Apple Watch',
