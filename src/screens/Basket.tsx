@@ -1,12 +1,27 @@
-import { View, Text, SafeAreaView, StyleSheet,TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Delete from '../assets/Icons/Delete'
 import { FONTS } from '../constants/Fonts'
 import { COLORS } from '../constants/Colors'
 import Notification from '../assets/Icons/Notification'
 import BasketItem from '../components/BasketItem'
+import { instance } from '../network/AxiosInstance'
+import Loading from '../components/Loading'
 
 export default function Basket({ route }: any) {
+
+  const [data, setData] = useState(null)
+  const [loading, setloading] = useState(true)
+
+  useEffect(() => {
+    instance.get('/api/basket/647c6bca2b23ba151ca5934f')
+      .then(resp => {
+        setData(resp.data)
+        setloading(false)
+      })
+      .catch(err => console.log('Err', err))
+  }, [loading])
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -30,19 +45,21 @@ export default function Basket({ route }: any) {
         </View>
 
         <View style={styles.basketItemContainer}>
-          <BasketItem />
+          {
+            loading ? <Loading /> : <BasketItem data={data} loading={loading} setloading={setloading} />
+          }
         </View>
 
         <View style={styles.priceBasketContainer}>
-            <View style={styles.priceContainer}>
-              <Text style={styles.priceText}>Total</Text>
-              <Text style={styles.price}>$ 914</Text>
-            </View>
-
-            <TouchableOpacity style={styles.btnContainer}>
-              <Text style={styles.btnText}>Checkout</Text>
-            </TouchableOpacity>
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceText}>Total</Text>
+            <Text style={styles.price}>$ 914</Text>
           </View>
+
+          <TouchableOpacity style={styles.btnContainer}>
+            <Text style={styles.btnText}>Checkout</Text>
+          </TouchableOpacity>
+        </View>
 
       </SafeAreaView>
     </>

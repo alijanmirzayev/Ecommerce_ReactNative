@@ -12,7 +12,6 @@ export default function ProductItem({selecetedCat, navigation}: any) {
     const { data, error, status } = useSelector((state: StateType) => state.products)
 
     const redirectDetailPage = (item: any) => {
-        console.log(item)
         navigation.navigate('ProductDetail', item)
     }
 
@@ -64,7 +63,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20
     },
     imageContainer: { alignSelf: 'center', marginTop: -30, marginBottom: 10 },
-    image: { width: 160, height: 160, marginTop: -50, borderRadius: 80, right: 5, },
+    image: { width: 160, height: 160, marginTop: -50, borderRadius: 80, right: 5, resizeMode: 'contain'},
 
     img: {
         alignSelf: 'center',

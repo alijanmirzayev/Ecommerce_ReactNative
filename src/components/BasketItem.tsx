@@ -1,38 +1,77 @@
-import { View, Text, FlatList, Image, StyleSheet } from 'react-native'
-import React from 'react'
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { BASKET } from '../data/basket'
 import { FONTS } from '../constants/Fonts'
 import { COLORS } from '../constants/Colors'
+import { instance } from '../network/AxiosInstance'
+import Loading from './Loading'
 
-export default function BasketItem() {
+export default function BasketItem(props: any) {
+    const { data, loading, setloading } = props
+    const decrease = (item: any) => {
+        if (item.quantity > 1) {
+            setloading(true)
+            const body = {
+                quantity: item.quantity,
+                id: item._id
+            }
+            instance.post('/api/basket/decrease', body)
+                .then(resp => {
+                    return resp
+                }).catch(err => console.log(err))
+        }
+        if (item.quantity == 1) {
+            setloading(true)
+            instance.delete(`/api/basket/${item._id}`,)
+                .then(resp => {
+                    return resp
+                }).catch(err => console.log(err))
+
+        }
+    }
+
+    const increase = (item: any) => {
+        setloading(true)
+        const body = {
+            quantity: item.quantity,
+            id: item._id
+        }
+        instance.post('/api/basket/increase', body)
+            .then(resp => {
+                return resp
+            }).catch(err => console.log(err))
+    }
 
     const renderItem = ({ item }: any) => {
         return (
             <>
                 <View style={styles.container}>
 
-                    <View style={styles.imageContainer}>
-                        <Image style={styles.image} source={{ uri: item.image }} />
-                    </View>
+                    <>
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.image} source={{ uri: item.productId.image }} />
+                        </View>
 
-                    <View style={styles.descriptionContainer}>
-                        <Text style={styles.title}>{item.brand} {item.model}</Text>
-                        <Text style={styles.price}>$ {item.price}</Text>
+                        <View style={styles.descriptionContainer}>
+                            <Text style={styles.title}>{item.productId.brand} {item.productId.model}</Text>
+                            <Text style={styles.price}>$ {item.productId.price}</Text>
 
-                        <View style={styles.quantityContainer}>
-                            <View>
-                                <Text style={styles.quantityText}>Quantity</Text>
-                            </View>
+                            <View style={styles.quantityContainer}>
+                                <View>
+                                    <Text style={styles.quantityText}>Quantity</Text>
+                                </View>
 
-                            <View style={styles.quantityCountContainer}>
-                                <Text style={styles.reducer}>-</Text>
-                                <Text style={styles.quantity}>2</Text>
-                                <Text style={styles.reducer}>+</Text>
+                                <View style={styles.quantityCountContainer}>
+                                    <TouchableOpacity onPress={() => decrease(item)} style={styles.reducer}><Text>-</Text></TouchableOpacity>
+                                    <Text style={styles.quantity}>{item.quantity}</Text>
+                                    <TouchableOpacity onPress={() => increase(item)} style={styles.reducer}><Text>+</Text></TouchableOpacity>
+                                </View>
+
                             </View>
 
                         </View>
+                    </>
 
-                    </View>
 
                 </View>
 
@@ -43,7 +82,7 @@ export default function BasketItem() {
     return (
         <>
             <FlatList
-                data={BASKET}
+                data={data}
                 renderItem={(item) => renderItem(item)}
             />
         </>

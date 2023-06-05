@@ -9,6 +9,7 @@ import { FONTS } from '../constants/Fonts'
 import ColorItem from '../components/ColorItem'
 import { getById } from '../redux/Slice/ProductDetailSlice';
 import Loading from '../components/Loading';
+import { instance } from '../network/AxiosInstance';
 
 export default function ProductDetail({ route, navigation }: any) {
 
@@ -20,6 +21,14 @@ export default function ProductDetail({ route, navigation }: any) {
   }, [])
 
   const redirectBasket = (data: any) => {
+    let body = {
+      quantity: 1,
+      productId: data._id,
+      userId: '647c6bca2b23ba151ca5934f'
+    }
+    instance.post('/api/basket/', body).then(resp => {
+      return
+    }).catch(err => console.log(err))
     navigation.navigate('Basket', data)
   }
 
@@ -117,6 +126,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   image: {
+    resizeMode: 'contain',
     width: '100%',
     height: '100%'
   },
